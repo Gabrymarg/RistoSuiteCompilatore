@@ -15,21 +15,21 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName=C:\{#MyAppName}
 DisableDirPage=yes
-UninstallDisplayIcon=C:\COMPILATORE\Ristosuite\assets\unistaller.ico
+UninstallDisplayIcon=C:\COMPILATORE\RistoSuiteCompilatore\assets\unistaller.ico
 ArchitecturesAllowed=x64
 ChangesAssociations=yes
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=no
-OutputDir=C:\COMPILATORE\Ristosuite\Output
+OutputDir=C:\COMPILATORE\RistoSuiteCompilatore\Output
 OutputBaseFilename=RistoSuiteInstaller
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=admin
 Password=RistoSuite2025
 
-WizardImageFile=C:\COMPILATORE\Ristosuite\assets\logo.bmp
-LicenseFile=C:\COMPILATORE\Ristosuite\assets\terms.txt
-SetupIconFile=C:\COMPILATORE\Ristosuite\assets\installer.ico
+WizardImageFile=C:\COMPILATORE\RistoSuiteCompilatore\assets\logo.bmp
+LicenseFile=C:\COMPILATORE\RistoSuiteCompilatore\assets\terms.txt
+SetupIconFile=C:\COMPILATORE\RistoSuiteCompilatore\assets\installer.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -39,13 +39,13 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 
 [Files]
 ; File principali
-Source: "C:\COMPILATORE\Ristosuite\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\COMPILATORE\Ristosuite\Struct.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\Struct.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; Cartelle web
-Source: "C:\COMPILATORE\Ristosuite\web\templates\*"; DestDir: "{app}\web\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\COMPILATORE\Ristosuite\web\static\*"; DestDir: "{app}\web\static"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\web\templates\*"; DestDir: "{app}\web\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\web\static\*"; DestDir: "{app}\web\static"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Icona personalizzata per il collegamento
-Source: "C:\COMPILATORE\Ristosuite\assets\Ristosuite.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\assets\Ristosuite.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
