@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Modifica Tavolo</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label>Nome Tavolo</label>
+        <input type="text" name="nome_tavolo" class="form-control" value="{{ tavolo['nome_tavolo'] }}" required>
+    </div>
+    <div class="mb-3">
+        <label>Numero Posti</label>
+        <input type="number" name="n_posti" class="form-control" value="{{ tavolo['n_posti'] }}" min="1" required>
+    </div>
+    <div class="mb-3">
+        <label>Posizione</label>
+        <input type="text" name="posizione" class="form-control" value="{{ tavolo['posizione'] }}">
+    </div>
+    <button class="btn btn-primary">Aggiorna</button>
+</form>
+{% endblock %}

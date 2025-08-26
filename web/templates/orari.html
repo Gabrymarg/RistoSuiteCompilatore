@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Orario di Apertura e Chiusura</h2>
+    <form method="POST" class="mt-3">
+        <div class="mb-3">
+            <label for="apertura" class="form-label">Orario Apertura</label>
+            <input type="time" id="apertura" name="apertura" class="form-control" value="{{ apertura }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="chiusura" class="form-label">Orario Chiusura</label>
+            <input type="time" id="chiusura" name="chiusura" class="form-control" value="{{ chiusura }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Salva</button>
+    </form>
+</div>
+{% endblock %}

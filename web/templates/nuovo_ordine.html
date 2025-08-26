@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card shadow p-4">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Nuovo Ordine</h2>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" id="formNuovoOrdine">
+            <div class="mb-3">
+                <label class="form-label">Tavolo</label>
+                <select name="id_tavolo" class="form-select" required>
+                    {% for tavolo in tavoli %}
+                    <option value="{{ tavolo['id_tavolo'] }}">{{ tavolo['nome_tavolo'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Operatore</label>
+                <select name="id_operatore" class="form-select" required>
+                    {% for op in operatori %}
+                    <option value="{{ op['id_operatore'] }}">{{ op['nome'] }} {{ op['cognome'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <h4 class="mt-4">Articoli</h4>
+            <table class="table table-bordered align-middle" id="tabellaArticoli">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Prezzo</th>
+                        <th>Quantità</th>
+                        <th>Ingredienti</th>
+                        <th>Personalizza</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for art in articoli %}
+                    <tr data-id="{{ art['id_articolo'] }}">
+                        <td>{{ art['nome'] }}</td>
+                        <td>€ {{ "%.2f"|format(art['prezzo']) }}</td>
+                        <td>
+                            <input type="number" name="quantita_{{ art['id_articolo'] }}" min="0" value="0" class="form-control">
+                        </td>
+                        <td class="ingredienti-colonna text-muted" data-loaded="false">Caricamento...</td>
+                        <td>
+                            <button type="button" 
+                                    class="btn btn-outline-secondary btn-sm btnPersonalizza" 
+                                    data-id="{{ art['id_articolo'] }}"
+                                    data-nome="{{ art['nome'] }}">
+                                🖉
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                <button class="btn btn-primary">Crea Ordine</button>
+            </div>
+
+            <!-- Modal personalizzazione -->
+            <div class="modal fade" id="modalPersonalizza" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Personalizza prodotto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <h6 id="nomeArticolo"></h6>
+
+                    <div class="mb-3">
+                        <label>Quante unità vuoi modificare?</label>
+                        <input type="number" id="quantitaModifica" class="form-control" min="1">
+                    </div>
+
+                    <hr>
+                    <h6>Ingredienti esistenti</h6>
+                    <div id="ingredienti-lista" class="mt-3"></div>
+                    <hr>
+                    <h6>Aggiungi ingredienti</h6>
+                    <div class="input-group mb-3">
+                        <select id="aggiungiIngredienteSelect" class="form-select"></select>
+                        <button class="btn btn-success" type="button" id="btnAggiungiIngrediente">Aggiungi</button>
+                    </div>
+                    <div id="ingredienti-aggiunti"></div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="button" class="btn btn-primary" id="btnSalvaPersonalizzazione">Salva modifiche</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let articoloIdCorrente = null;
+    let rigaCorrente = null;
+    let ingredientiDefault = [];
+    let indiceRighe = 0;  // Contatore globale per righe
+
+    // All'avvio assegna indici alle righe esistenti
+    document.querySelectorAll('#tabellaArticoli tbody tr').forEach(tr => {
+        tr.dataset.index = indiceRighe;
+        const idArt = tr.dataset.id;
+        const inputQta = tr.querySelector('input[type="number"]');
+        inputQta.name = `quantita_${indiceRighe}`;
+
+        // Aggiungi hidden input id_articolo_<indice> se non esiste
+        if (!tr.querySelector(`input[name="id_articolo_${indiceRighe}"]`)) {
+            let inputIdArt = document.createElement('input');
+            inputIdArt.type = 'hidden';
+            inputIdArt.name = `id_articolo_${indiceRighe}`;
+            inputIdArt.value = idArt;
+            tr.appendChild(inputIdArt);
+        }
+        indiceRighe++;
+    });
+
+    // Funzione per caricare ingredienti e aggiornare la colonna ingredienti
+    function caricaIngredientiTabella() {
+        document.querySelectorAll('#tabellaArticoli tbody tr').forEach(tr => {
+            const id = tr.dataset.id;
+            const tdIngredienti = tr.querySelector('.ingredienti-colonna');
+            fetch(`/articolo/${id}/ingredienti`)
+                .then(r => r.json())
+                .then(data => {
+                    tdIngredienti.textContent = data.length > 0 ? data.map(i => i.nome).join(", ") : "Nessun ingrediente";
+                    tdIngredienti.dataset.loaded = "true";
+
+                    if (!tr.dataset.ingredienti) {
+                        const defaultIds = data.map(i => i.id_ingrediente);
+                        tr.dataset.ingredienti = JSON.stringify(defaultIds);
+                    }
+                })
+                .catch(err => {
+                    console.error("Errore caricamento ingredienti:", err);
+                    tdIngredienti.textContent = "Errore";
+                });
+        });
+    }
+    caricaIngredientiTabella();
+
+    // Delegazione eventi per pulsante personalizza
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.btnPersonalizza')) {
+            const btn = e.target.closest('.btnPersonalizza');
+            articoloIdCorrente = btn.dataset.id;
+            rigaCorrente = btn.closest('tr');
+            const nomeArticolo = btn.dataset.nome;
+            document.getElementById('nomeArticolo').textContent = nomeArticolo;
+
+            let qta = parseInt(rigaCorrente.querySelector('input[type="number"]').value) || 1;
+            document.getElementById('quantitaModifica').value = qta;
+            document.getElementById('quantitaModifica').max = qta;
+
+            fetch(`/articolo/${articoloIdCorrente}/ingredienti`)
+                .then(r => r.json())
+                .then(data => {
+                    ingredientiDefault = data;
+                    const lista = document.getElementById('ingredienti-lista');
+
+                    let savedIngredientiIds = [];
+                    if (rigaCorrente.dataset.ingredienti) {
+                        try {
+                            savedIngredientiIds = JSON.parse(rigaCorrente.dataset.ingredienti);
+                        } catch(e) {
+                            savedIngredientiIds = [];
+                        }
+                    } else {
+                        savedIngredientiIds = data.map(i => i.id_ingrediente);
+                    }
+
+                    if (data.length === 0) {
+                        lista.innerHTML = '<p class="text-muted">Nessun ingrediente associato.</p>';
+                    } else {
+                        lista.innerHTML = data.map(ing => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="${ing.id_ingrediente}"
+                                    ${savedIngredientiIds.includes(ing.id_ingrediente) ? 'checked' : ''}>
+                                <label class="form-check-label">${ing.nome}</label>
+                            </div>
+                        `).join('');
+                    }
+                });
+
+            fetch(`/ingredienti/disponibili/${articoloIdCorrente}`)
+                .then(r => r.json())
+                .then(data => {
+                    const select = document.getElementById('aggiungiIngredienteSelect');
+                    select.innerHTML = data.length === 0
+                        ? '<option disabled>Nessun ingrediente disponibile</option>'
+                        : data.map(ing => `<option value="${ing.id_ingrediente}">${ing.nome}</option>`).join('');
+                });
+
+            document.getElementById('ingredienti-aggiunti').innerHTML = '';
+
+            try {
+                new bootstrap.Modal(document.getElementById('modalPersonalizza')).show();
+            } catch (err) {
+                console.error("Errore apertura modal:", err);
+            }
+        }
+    });
+
+    // Aggiungi ingrediente extra
+    document.getElementById('btnAggiungiIngrediente').addEventListener('click', function() {
+        const select = document.getElementById('aggiungiIngredienteSelect');
+        const id = select.value;
+        const nome = select.options[select.selectedIndex]?.text;
+        if (!id) return;
+        document.getElementById('ingredienti-aggiunti').innerHTML += `
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="${id}" checked>
+                <label class="form-check-label">${nome} (aggiunto)</label>
+            </div>
+        `;
+        select.remove(select.selectedIndex);
+    });
+
+    // Funzione per aggiornare hidden input ingredienti nel form principale per una riga
+    function aggiornaHiddenIngredienti(tr, ingredientiIds) {
+        const indice = tr.dataset.index;
+        const form = document.getElementById('formNuovoOrdine');
+        form.querySelectorAll(`input[name="ingredienti_${indice}[]"]`).forEach(el => el.remove());
+
+        ingredientiIds.forEach(idIng => {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = `ingredienti_${indice}[]`;
+            input.value = idIng;
+            form.appendChild(input);
+        });
+    }
+
+    // Funzione per recuperare nomi ingredienti da ID
+    function nomiIngredientiDaIds(ids) {
+        let nomi = [];
+        ids.forEach(id => {
+            let ing = ingredientiDefault.find(i => i.id_ingrediente == id);
+            if (ing) nomi.push(ing.nome);
+            else nomi.push(`(ingrediente sconosciuto ${id})`);
+        });
+        return nomi;
+    }
+
+    // Salva modifiche personalizzazione
+    document.getElementById('btnSalvaPersonalizzazione').addEventListener('click', function() {
+        let qtaTotale = parseInt(rigaCorrente.querySelector('input[type="number"]').value);
+        let qtaModifica = parseInt(document.getElementById('quantitaModifica').value);
+        if (qtaModifica > qtaTotale) qtaModifica = qtaTotale;
+
+        let ingredientiIds = [];
+        document.querySelectorAll('#ingredienti-lista input[type="checkbox"]:checked, #ingredienti-aggiunti input[type="checkbox"]:checked')
+            .forEach(el => ingredientiIds.push(el.value));
+
+        if (qtaModifica < qtaTotale) {
+            let clone = rigaCorrente.cloneNode(true);
+
+            // assegna nuovo indice univoco
+            clone.dataset.index = indiceRighe;
+
+            // aggiorna name input clone
+            clone.querySelector('input[type="number"]').name = `quantita_${indiceRighe}`;
+            clone.querySelector('input[type="number"]').value = qtaModifica;
+
+            // aggiorna hidden id_articolo nel clone
+            let inputIdArtClone = clone.querySelector(`input[name^="id_articolo"]`);
+            if (!inputIdArtClone) {
+                inputIdArtClone = document.createElement('input');
+                inputIdArtClone.type = 'hidden';
+                clone.appendChild(inputIdArtClone);
+            }
+            inputIdArtClone.name = `id_articolo_${indiceRighe}`;
+            inputIdArtClone.value = clone.dataset.id;
+
+            // **AGGIORNAMENTO CRUCIALE: aggiorna dataset ingredienti del clone**
+            clone.dataset.ingredienti = JSON.stringify(ingredientiIds);
+
+            // aggiorna hidden input ingredienti clone
+            aggiornaHiddenIngredienti(clone, ingredientiIds);
+
+            // aggiorna colonna ingredienti clone
+            clone.querySelector('.ingredienti-colonna').textContent = nomiIngredientiDaIds(ingredientiIds).join(", ");
+
+            // aggiorna riga originale
+            rigaCorrente.querySelector('input[type="number"]').value = qtaTotale - qtaModifica;
+
+            let origIngIds = [];
+            try {
+                origIngIds = JSON.parse(rigaCorrente.dataset.ingredienti);
+            } catch(e) {
+                origIngIds = [];
+            }
+            rigaCorrente.querySelector('.ingredienti-colonna').textContent = nomiIngredientiDaIds(origIngIds).join(", ");
+
+            aggiornaHiddenIngredienti(rigaCorrente, origIngIds);
+
+            rigaCorrente.after(clone);
+
+            indiceRighe++;
+
+        } else {
+            rigaCorrente.dataset.ingredienti = JSON.stringify(ingredientiIds);
+            rigaCorrente.querySelector('.ingredienti-colonna').textContent = nomiIngredientiDaIds(ingredientiIds).join(", ");
+            aggiornaHiddenIngredienti(rigaCorrente, ingredientiIds);
+        }
+
+        bootstrap.Modal.getInstance(document.getElementById('modalPersonalizza')).hide();
+    });
+
+    // All'invio del form, aggiorna hidden ingredienti per righe con quantità > 0
+    document.getElementById('formNuovoOrdine').addEventListener('submit', function(e) {
+        const form = this;
+
+        // Rimuovi tutti gli hidden ingredienti esistenti
+        form.querySelectorAll('input[name^="ingredienti_"]').forEach(el => el.remove());
+
+        // Per ogni riga con quantità > 0 aggiungi hidden ingredienti
+        form.querySelectorAll('#tabellaArticoli tbody tr').forEach(tr => {
+            const qta = parseInt(tr.querySelector('input[type="number"]').value) || 0;
+            if (qta <= 0) return;
+
+            const indice = tr.dataset.index;
+
+            let savedIngredientiIds = [];
+            if (tr.dataset.ingredienti) {
+                try {
+                    savedIngredientiIds = JSON.parse(tr.dataset.ingredienti);
+                } catch(e) {
+                    savedIngredientiIds = [];
+                }
+            }
+
+            aggiornaHiddenIngredienti(tr, savedIngredientiIds);
+        });
+    });
+});
+</script>
+
+
+
+{% endblock %}
