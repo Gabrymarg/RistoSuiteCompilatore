@@ -1,0 +1,61 @@
+
+Termini e Condizioni d’Uso – RistoSuite
+Ultimo aggiornamento: [Agosto 2025]
+
+Benvenuto/a in RistoSuite, l’applicazione di gestione ristorazione sviluppata da [RistoSuite Software].
+Installando, accedendo o utilizzando l’applicazione (“App”), l’utente (“Utente”) accetta integralmente i seguenti Termini e Condizioni. Se non si accetta, non è consentito utilizzare l’App.
+
+1. Oggetto
+L’App RistoSuite è un software destinato a ristoranti, bar, pizzerie e attività simili, che consente:
+- Gestione degli ordini e dei tavoli
+- Gestione magazzino e fornitori
+- Funzionalità di fidelizzazione clienti
+- Reportistica e analisi dei dati
+L’App è distribuita (as-is), con aggiornamenti e nuove funzionalità a discrezione del team sviluppo.
+
+2. Licenza d’Uso
+- L’utente riceve una licenza limitata, non esclusiva, non trasferibile per utilizzare l’App su dispositivi autorizzati.
+- È vietata la riproduzione, modifica, distribuzione o vendita dell’App senza autorizzazione scritta del team.
+- L’App è concessa per uso professionale e commerciale nel settore della ristorazione.
+
+3. Requisiti di Sistema
+L’utente è responsabile di garantire che il proprio dispositivo soddisfi i requisiti minimi indicati nella documentazione tecnica.
+
+4. Account e Sicurezza
+- L’uso di alcune funzioni potrebbe richiedere la creazione di un account.
+- L’utente è responsabile della sicurezza delle proprie credenziali e di tutte le attività svolte tramite il proprio account.
+- La Società non è responsabile per accessi non autorizzati dovuti a negligenza dell’utente.
+
+5. Dati Personali e Privacy
+L’App può trattare dati personali di clienti, fornitori e dipendenti.
+Il trattamento avviene in conformità al Regolamento UE 2016/679 (GDPR).
+Consulta la nostra Informativa Privacy per dettagli sulle modalità di trattamento, conservazione e protezione dei dati.
+
+6. Aggiornamenti
+La Società si riserva il diritto di rilasciare aggiornamenti, correzioni e nuove versioni dell’App, che potrebbero modificare o rimuovere funzionalità.
+
+7. Limitazioni di Responsabilità
+- L’App è fornita dallla Società non garantisce assenza di errori o bug.
+- La Società non è responsabile di danni diretti o indiretti derivanti dall’uso o impossibilità d’uso dell’App.
+- È responsabilità dell’utente effettuare backup regolari dei dati.
+
+8. Proprietà Intellettuale
+Tutti i diritti sul software, sui loghi, sul design e sulla documentazione sono riservati a [Ristosuite Software].
+Qualsiasi uso non autorizzato costituisce violazione delle normative sul diritto d’autore.
+
+9. Assistenza Tecnica
+L’utente può richiedere assistenza tramite i canali ufficiali indicati nella documentazione.
+Il livello di supporto dipende dal tipo di licenza o abbonamento sottoscritto.
+
+10. Risoluzione del Contratto
+La Società può sospendere o terminare l’accesso all’App in caso di:
+- Violazione dei presenti Termini e Condizioni
+- Uso improprio o illecito dell’App
+- Mancato pagamento di eventuali canoni di licenza
+
+11. Legge Applicabile e Foro Competente
+I presenti Termini sono regolati dalla legge italiana.
+Per qualsiasi controversia sarà competente il foro di [Italia].
+
+12. Accettazione
+Proseguendo con l’installazione o l’utilizzo dell’App, l’utente dichiara di aver letto, compreso e accettato integralmente i presenti Termini e Condizioni.
