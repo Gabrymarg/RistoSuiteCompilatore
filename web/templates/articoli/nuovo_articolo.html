@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Nuovo Articolo</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label>Nome</label>
+        <input type="text" name="nome" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Descrizione</label>
+        <textarea name="descrizione" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label>Prezzo</label>
+        <input type="number" step="0.01" name="prezzo" class="form-control" min="0" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Categoria</label>
+        <select name="categoria" class="form-select">
+            <option value="">-- Nessuna categoria --</option>
+            {% for cat in categorie %}
+                <option value="{{ cat['id_categoria'] }}">{{ cat['nome'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <h4>Ingredienti</h4>
+    <p>Seleziona gli ingredienti e specifica la quantità usata per questo articolo:</p>
+
+    <!-- Barra di ricerca ingredienti -->
+    <input type="text" id="searchIngredienti" class="form-control mb-2" placeholder="Cerca ingrediente..." onkeyup="filterIngredienti()">
+
+    <ul class="list-group mb-3" id="ingredientiList">
+        {% for ingr in ingredienti %}
+        <li class="list-group-item align-items-center" style="display: flex;">
+            <input class="form-check-input me-2" type="checkbox" id="ingr{{ ingr[0] }}" name="ingredienti" value="{{ ingr[0] }}">
+            <label class="form-check-label flex-grow-1" for="ingr{{ ingr[0] }}">{{ ingr[1] }}</label>
+            
+            {% if usa_giacenza %}
+                <input type="number" step="0.01" min="0" name="quantita_ingredienti_{{ ingr[0] }}" class="form-control" style="width: 100px;" placeholder="Quantità">
+            {% endif %}
+        </li>
+        {% endfor %}
+        <li id="noIngredientiMsg" class="list-group-item text-center" style="display:none;">Nessun ingrediente trovato.</li>
+    </ul>
+
+    <button class="btn btn-primary">Salva</button>
+</form>
+
+<script>
+function filterIngredienti() {
+    const input = document.getElementById('searchIngredienti');
+    const filter = input.value.toLowerCase();
+    const ul = document.getElementById('ingredientiList');
+    const items = ul.getElementsByTagName('li');
+    let found = false;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.id === "noIngredientiMsg") continue;
+
+        const label = item.querySelector('label');
+        const text = label.textContent.toLowerCase();
+
+        if (text.includes(filter)) {
+            item.style.display = "flex"; // mostra li
+            found = true;
+        } else {
+            item.style.display = "none"; // nascondi li
+        }
+    }
+
+    // Mostra messaggio se nessun risultato
+    document.getElementById('noIngredientiMsg').style.display = found ? "none" : "block";
+}
+</script>
+{% endblock %}

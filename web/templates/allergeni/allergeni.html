@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Tipi di Allergeni</h2>
+<a href="{{ url_for('nuovo_allergene') }}" class="btn btn-success mb-3">Nuovo Allergene</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrizione</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lat in allergeni %}
+        <tr>
+            <td>{{ lat['nome'] }}</td>
+            <td>{{ lat['descrizione'] }}</td>
+            <td>
+                <a href="{{ url_for('modifica_allergene', id_allergene=lat['id_allergene']) }}" class="btn btn-primary btn-sm">Modifica</a>
+                <form action="{{ url_for('elimina_allergene', id_allergene=lat['id_allergene']) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Sei sicuro di voler eliminare questo allergene?');">
+                    <button class="btn btn-danger btn-sm">Elimina</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">Nessun Allergene trovato.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

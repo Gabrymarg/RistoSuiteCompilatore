@@ -2,77 +2,155 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Gestionale Pizzeria</title>
+    <title>{% block title %}Gestionale Pizzeria{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .disabled-link {
-            pointer-events: none;
-            opacity: 0.5;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
+    <style>
+        
+        .dropdown-item a {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-  <div class="container">
-    <img class="img-fluid navbar-brand" src="{{ url_for('static', filename='./Logo_WebApp_Ristosuite.png') }}" alt="">
-<!--<a class="navbar-brand fs-1" href="{{ url_for('index') }}"> Pizza</a>-->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="ARTICOLI" href="{{ url_for('lista_articoli') }}">Articoli</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="TAVOLI" href="{{ url_for('lista_tavoli') }}">Tavoli</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="ORDINI" href="{{ url_for('lista_ordini') }}">Ordini</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="OPERATORI" href="{{ url_for('operatori') }}">Operatori</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="INGREDIENTI" href="{{ url_for('lista_ingredienti') }}">Ingredienti</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="FORNITORI" href="{{ url_for('lista_fornitori') }}">Fornitori</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="CATEGORIE" href="{{ url_for('lista_categorie') }}">Categorie</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="STATISTICHE_ORDINI" href="{{ url_for('statistiche_ordini') }}">Visualizza Statistiche Ordini</a></li>
-        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="TOP10" href="{{ url_for('statistiche_prodotti_top10') }}">Top 10 Prodotti</a></li>
-      </ul>
+    <div class="container ">
+        <img class="img-fluid navbar-brand" src="{{ url_for('static', filename='./Logo_WebApp_Ristosuite.png') }}" alt="">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="true" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse collapse hidden" id="navbarSupportedContent" >
+        <ul class="navbar-nav mx-auto me-auto mb-2 mb-lg-0 text-center">
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="ARTICOLI" href="{{ url_for('lista_articoli') }}">Articoli</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="TAVOLI" href="{{ url_for('lista_tavoli') }}">Tavoli</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="ORDINI" href="{{ url_for('lista_ordini') }}">Ordini</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="OPERATORI" href="{{ url_for('operatori') }}">Operatori</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="INGREDIENTI" href="{{ url_for('lista_ingredienti') }}">Ingredienti</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="FORNITORI" href="{{ url_for('lista_fornitori') }}">Fornitori</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="CATEGORIE" href="{{ url_for('lista_allergeni') }}">Allergeni</a></li>
+            <li class="nav-item"><a class="nav-link modulo-link" data-modulo="STATISTICHE_ORDINI" href="{{ url_for('statistiche_ordini') }}">Statistiche</a></li>
+            
+        </ul>
+        {% if session.user %}
+          <div class="mx-2">
+            <ul class="navbar-nav mx-3 me-3 text-center">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdown03" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ session.user.nome }} {{ session.user.cognome }} <i class="bi bi-person-circle"></i></a>
+                  <div class="dropdown-menu text-center" aria-labelledby="dropdown01">
+                    <button class="dropdown-item btn"><a href="{{url_for('orari')}}">Orario  <i class="bi bi-clock-fill"></i></a></button>
+                    <button class="dropdown-item btn"><a href="{{url_for('logout')}}">Logout  <i class="bi bi-box-arrow-right"></i> </button>
+                  </div>
+                </li>
+              </ul>
+          </div>
+        <a class=" nav-link" href="{{ url_for('logout') }}">Logout<i class="bi bi-box-arrow-right"></i></a>
+        {% endif %}
+        </div>
+      </div>
     </div>
-  </div>
 </nav>
+
+<!-- Toast Benvenuto -->
+<div id="Benvenuto" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            {% if category == 'benvenuto' %}
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                	<img src="{{ url_for('static', filename='./Ristosuite.ico') }}" class="rounded me-2" style="max-width: 25px;" alt="..."> 
+			        <strong class="me-auto">RistoSuite</strong> 
+                </div> 
+                <div class="toast-body bg-white"> 
+                    <p>Benvenuto in RistoSuite!, {{message}}</p> 
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+</div>
+<!-- Toast Ordini -->
+<div id="Ordini" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"></div>
 
 <div class="container">
     {% block content %}{% endblock %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    let activeModules = [];
 
+<script>
+    // Controllo licenza
+    let activeModules = [];
     async function checkLicense() {
         try {
             const response = await fetch("/check_license");
             const data = await response.json();
-            if (data.valid) {
-                activeModules = data.license.modules.map(m => m.toUpperCase());
-                console.log(activeModules)
-            } else {
-                activeModules = [];
-                alert("Licenza non valida: " + data.message);
-            }
-
+            activeModules = data.valid ? data.license.modules.map(m => m.toUpperCase()) : [];
             document.querySelectorAll(".modulo-link").forEach(link => {
                 const modulo = link.dataset.modulo.toUpperCase();
                 if (!activeModules.includes(modulo)) {
                     link.classList.add("disabled-link");
-                    link.addEventListener("click", e => {
-                        e.preventDefault();
-                        alert(`Modulo ${modulo} non attivo!`);
-                    });
+                    link.addEventListener("click", e => { e.preventDefault(); alert(`Modulo ${modulo} non attivo!`); });
                 }
             });
+        } catch (err) { console.error("Errore fetch licenza:", err); }
+    }
+    checkLicense();
 
-        } catch (err) {
-            alert("Errore nel controllo licenza: " + err);
-        }
+    // Mostra toast già presenti
+    function showToasts(containerId) {
+        const toastElList = [].slice.call(document.querySelectorAll(`#${containerId} .toast`));
+        toastElList.map(el => new bootstrap.Toast(el, { delay: 4000, animation: true })).forEach(toast => toast.show());
     }
 
-    checkLicense();
+    window.addEventListener("DOMContentLoaded", () => {
+        // Mostra toast di benvenuto dopo un piccolo delay
+        setTimeout(() => showToasts('Benvenuto'), 100);
+
+        // Avvia polling per nuovi ordini
+        pollNuoviOrdini();
+    });
+
+
+// --- Polling per nuovi ordini ---
+async function pollNuoviOrdini() {
+    try {
+        const response = await fetch('/api/nuovi_ordini'); // nessun last_id da passare
+        if (response.ok) {
+            const data = await response.json();
+            if (data.nuovi_ordini && data.nuovi_ordini.length > 0) {
+                data.nuovi_ordini.forEach(ordine => {
+                    const ordiniContainer = document.getElementById('Ordini');
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-bg-success border-0 ordini';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                Nuovo ordine da ${ordine.operatore}: Totale €${ordine.totale}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    `;
+                    ordiniContainer.appendChild(toast);
+                    new bootstrap.Toast(toast, { delay: 4000, animation: true }).show();
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Errore nel polling nuovi ordini:", err);
+    }
+
+    setTimeout(pollNuoviOrdini, 5000); // ripeti ogni 5 secondi
+}
+
+
+
+
 </script>
 </body>
 </html>

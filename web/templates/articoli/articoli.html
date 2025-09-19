@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Articoli</h2>
+
+<!-- Filtro per categoria -->
+<form method="GET" class="mb-3">
+    <label>Filtra per categoria:</label>
+    <select name="categoria" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
+        <option value="">Tutte</option>
+        {% for cat in categorie %}
+            <option value="{{ cat['id_categoria'] }}" {% if request.args.get('categoria') == cat['id_categoria']|string %}selected{% endif %}>
+                {{ cat['nome'] }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<a href="{{ url_for('nuovo_articolo') }}" class="btn btn-success mb-3">Nuovo Articolo</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrizione</th>
+            <th>Prezzo</th>
+            <th>Categoria</th>
+            <th>Allergeni</th>
+            <th>Ingredienti</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for art in articoli %}
+        <tr>
+            <td>{{ art['nome'] }}</td>
+            <td>{{ art['descrizione'] }}</td>
+            <td>€ {{ "%.2f"|format(art['prezzo']) }}</td>
+            <td>{{ art['categoria'] if art['categoria'] else '-' }}</td>
+            <td>{{ art['allergeni'] if art['allergeni'] else '-' }}</td>
+            <td>{{ art['ingredienti'] if art['ingredienti'] else '-' }}</td>
+            <td>
+                <a href="{{ url_for('modifica_articolo', id_articolo=art['id_articolo']) }}" class="btn btn-primary btn-sm">Modifica</a>
+                <form action="{{ url_for('elimina_articolo', id_articolo=art['id_articolo']) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Sei sicuro di voler eliminare questo articolo?');">
+                    <button class="btn btn-danger btn-sm">Elimina</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7" class="text-center">Nessun articolo trovato.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

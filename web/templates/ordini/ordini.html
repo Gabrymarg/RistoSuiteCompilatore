@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Ordini Attivi</h2>
+<a href="{{ url_for('nuovo_ordine') }}" class="btn btn-success mb-3">Nuovo Ordine</a>
+<a href="{{ url_for('storico_ordini') }}" class="btn btn-secondary mb-3">Storico Ordini</a>
+
+<table class="table table-bordered">
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Tavolo</th>
+        <th>Operatore</th>
+        <th>Prodotti & Ingredienti</th>
+        <th>Totale</th>
+        <th>Stato</th>
+        <th>Data Ricezione Ordine</th>
+        <th>Azioni</th>
+    </tr>
+</thead>
+<tbody>
+{% for ordine in ordini if ordine.stato != 'completato' %}
+<tr>
+    <td>{{ ordine.id_ordine }}</td>
+    <td>{{ ordine.nome_tavolo }}</td>
+    <td>{{ ordine.operatore_nome }}</td>
+    <td>
+        {% for prodotto in ordine.prodotti %}
+        <div class="mb-2">
+            <strong>{{ prodotto.quantità }} × {{ prodotto.nome }}</strong>
+
+            {% set ingredienti_standard = ingredienti_base_per_articolo.get(prodotto.id_articolo, []) | map('int') | list %}
+            {% set ingredienti_custom = prodotto.ingredienti | map('int') | list %}
+            {% set aggiunti = ingredienti_custom | reject('in', ingredienti_standard) | list %}
+            {% set rimossi = ingredienti_standard | reject('in', ingredienti_custom) | list %}
+
+            <div class="mt-1">
+                {% for ing_id in ingredienti_standard %}
+                    {% if ing_id not in rimossi %}
+                        <span class="badge bg-secondary">✓ {{ ingredienti_map.get(ing_id|string, "Ingrediente sconosciuto") }}</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% for ing_id in aggiunti %}
+                    <span class="badge bg-success">+ {{ ingredienti_map.get(ing_id|string, "Ingrediente sconosciuto") }}</span>
+                {% endfor %}
+
+                {% for ing_id in rimossi %}
+                    <span class="badge bg-danger">- {{ ingredienti_map.get(ing_id|string, "Ingrediente sconosciuto") }}</span>
+                {% endfor %}
+            </div>
+
+            <small class="text-muted d-block mt-1">
+                Standard: {{ ingredienti_standard | join(', ') }}<br>
+                Custom: {{ ingredienti_custom | join(', ') }}<br>
+                Aggiunti: {{ aggiunti | join(', ') }}<br>
+                Rimossi: {{ rimossi | join(', ') }}
+            </small>
+        </div>
+        {% endfor %}
+    </td>
+    <td>€ {{ "%.2f"|format(ordine.totale) }}</td>
+    <td>{{ ordine.stato|capitalize }}</td>
+    <td>{{ ordine.data_ordine }}</td>
+    <td>
+        <a href="{{ url_for('modifica_ordine', id_ordine=ordine.id_ordine) }}" class="btn btn-primary btn-sm mb-1">Modifica</a>
+        <form action="{{ url_for('elimina_ordine', id_ordine=ordine.id_ordine) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Sei sicuro di voler eliminare questo ordine?');">
+            <button class="btn btn-danger btn-sm">Elimina</button>
+        </form>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="8" class="text-center">Nessun ordine attivo.</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

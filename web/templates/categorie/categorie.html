@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Categorie</h2>
+<a href="{{ url_for('nuova_categoria') }}" class="btn btn-success mb-3">Nuova Categoria</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrizione</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cat in categorie %}
+        <tr>
+            <td>{{ cat['nome'] }}</td>
+            <td>{{ cat['descrizione'] if cat['descrizione'] else '-' }}</td>
+            <td>
+                <a href="{{ url_for('modifica_categoria', id_categoria=cat['id_categoria']) }}" class="btn btn-primary btn-sm">Modifica</a>
+                <form action="{{ url_for('elimina_categoria', id_categoria=cat['id_categoria']) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Sei sicuro di voler eliminare questa categoria?');">
+                    <button class="btn btn-danger btn-sm">Elimina</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3" class="text-center">Nessuna categoria trovata.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Caricamento...</title>
+<style>
+    html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(-45deg, #162b53, #214077, #0f2027, #192e35);
+        background-size: 300% 300%;
+        animation: bgShift 12s ease infinite;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+    }
+
+    @keyframes bgShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        width: 80%;
+        max-width: 500px;
+    }
+
+    /* Logo */
+    .loader img {
+        width: min(70vw, 400px);
+        aspect-ratio: 1280 / 720;
+        object-fit: contain;
+        animation: fadePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes fadePulse {
+        0%, 100% { opacity: 0.8; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.04); }
+    }
+
+    /* Barra di caricamento */
+    .progress-container {
+        width: 100%;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00ffcc, #ffffff);
+        border-radius: 20px;
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        margin-top: 12px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+
+    /* Fade-out transizione */
+    body.fade-out {
+        opacity: 0;
+        transition: opacity 0.8s ease;
+    }
+
+    /* Accessibilità */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        border: 0;
+    }
+</style>
+</head>
+<body>
+
+<div class="loader">
+    <img src="{{ url_for('static', filename='Logo_Loading_Ristosuite.png') }}" alt="Logo">
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="progress-text" id="progress-text">0%</div>
+
+    <span class="sr-only">Attendere, caricamento in corso...</span>
+</div>
+
+<script>
+    let progress = 0;
+    const bar = document.getElementById("progress-bar");
+    const text = document.getElementById("progress-text");
+
+    const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 8) + 10; // incremento casuale 3-10%
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+
+            // Fade-out + Redirect
+            setTimeout(() => {
+                document.body.classList.add("fade-out");
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 800);
+            }, 500);
+        }
+        bar.style.width = progress + "%";
+        text.textContent = progress + "%";
+    }, 300);
+</script>
+
+</body>
+</html>

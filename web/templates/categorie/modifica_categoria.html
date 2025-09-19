@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Modifica Categoria</h2>
+
+<form method="POST" action="{{ url_for('modifica_categoria', id_categoria=categoria['id_categoria']) }}">
+    <div class="mb-3">
+        <label for="nome" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="nome" name="nome" value="{{ categoria['nome'] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="descrizione" class="form-label">Descrizione</label>
+        <textarea class="form-control" id="descrizione" name="descrizione" rows="3">{{ categoria['descrizione'] }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Aggiorna</button>
+    <a href="{{ url_for('lista_categorie') }}" class="btn btn-secondary">Annulla</a>
+</form>
+{% endblock %}

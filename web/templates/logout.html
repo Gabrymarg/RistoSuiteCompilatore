@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .logout-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 3px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 350px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+    <script>
+        // Redirect automatico al login dopo 3 secondi
+        setTimeout(() => {
+            window.location.href = "/login_web";
+        }, 3000);
+    </script>
+</head>
+<body>
+    <div class="logout-box">
+        <h2>Logout effettuato</h2>
+        <p>Sei stato disconnesso correttamente.<br>Verrai reindirizzato al login...</p>
+    </div>
+</body>
+</html>
