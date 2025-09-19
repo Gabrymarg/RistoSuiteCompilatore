@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Licenza Moduli</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        .status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Test Licenza Moduli</h1>
+    <div>
+        <button id="PIPPO2">PIPPO2 Funzionalità</button>
+        <button id="1">Funzionalità 1</button>
+        <button id="2">Funzionalità 2</button>
+    </div>
+    <div class="status" id="status">Controllo licenza in corso...</div>
+
+    <script>
+        let activeModules = [];  // moduli attivi
+
+        async function checkLicense() {
+            try {
+                const response = await fetch("/check_license");
+                const data = await response.json();
+                const statusEl = document.getElementById("status");
+
+                if (data.valid) {
+                    activeModules = data.license.modules;
+                    statusEl.textContent = "Licenza valida! Moduli attivi: " + activeModules.join(", ");
+                } else {
+                    activeModules = [];
+                    statusEl.textContent = "Licenza non valida: " + data.message;
+                }
+            } catch (err) {
+                document.getElementById("status").textContent = "Errore nel controllo licenza: " + err;
+            }
+        }
+
+        // Funzione chiamata quando si clicca un pulsante
+        function handleModuleClick(modulo) {
+            if (activeModules.includes(modulo)) {
+                alert(`Funzionalità ${modulo} eseguita!`);
+            } else {
+                alert(`Modulo ${modulo} non attivo!`);
+            }
+        }
+
+        // Collega pulsanti alla funzione
+        document.querySelectorAll("button").forEach(btn => {
+            btn.addEventListener("click", () => handleModuleClick(btn.id));
+        });
+
+        // Controllo licenza all'avvio
+        checkLicense();
+    </script>
+</body>
+</html>

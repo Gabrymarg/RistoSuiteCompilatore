@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ 'Modifica Fornitore' if fornitore else 'Nuovo Fornitore' }}</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label for="nome" class="form-label">Nome</label>
+    <input type="text" class="form-control" id="nome" name="nome" required value="{{ fornitore['nome'] if fornitore else '' }}">
+  </div>
+  <div class="mb-3">
+    <label for="indirizzo" class="form-label">Indirizzo</label>
+    <input type="text" class="form-control" id="indirizzo" name="indirizzo" value="{{ fornitore['indirizzo'] if fornitore else '' }}">
+  </div>
+  <div class="mb-3">
+    <label for="telefono" class="form-label">Telefono</label>
+    <input type="text" class="form-control" id="telefono" name="telefono" value="{{ fornitore['telefono'] if fornitore else '' }}">
+  </div>
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" class="form-control" id="email" name="email" value="{{ fornitore['email'] if fornitore else '' }}">
+  </div>
+  <button type="submit" class="btn btn-primary">Salva</button>
+  <a href="{{ url_for('lista_fornitori') }}" class="btn btn-secondary">Annulla</a>
+</form>
+{% endblock %}

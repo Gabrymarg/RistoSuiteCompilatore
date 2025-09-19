@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionale Pizzeria</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .disabled-link {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container">
+    <img class="img-fluid navbar-brand" src="{{ url_for('static', filename='./Logo_WebApp_Ristosuite.png') }}" alt="">
+<!--<a class="navbar-brand fs-1" href="{{ url_for('index') }}"> Pizza</a>-->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="ARTICOLI" href="{{ url_for('lista_articoli') }}">Articoli</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="TAVOLI" href="{{ url_for('lista_tavoli') }}">Tavoli</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="ORDINI" href="{{ url_for('lista_ordini') }}">Ordini</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="OPERATORI" href="{{ url_for('operatori') }}">Operatori</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="INGREDIENTI" href="{{ url_for('lista_ingredienti') }}">Ingredienti</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="FORNITORI" href="{{ url_for('lista_fornitori') }}">Fornitori</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="CATEGORIE" href="{{ url_for('lista_categorie') }}">Categorie</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="STATISTICHE_ORDINI" href="{{ url_for('statistiche_ordini') }}">Visualizza Statistiche Ordini</a></li>
+        <li class="nav-item"><a class="nav-link modulo-link" data-modulo="TOP10" href="{{ url_for('statistiche_prodotti_top10') }}">Top 10 Prodotti</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let activeModules = [];
+
+    async function checkLicense() {
+        try {
+            const response = await fetch("/check_license");
+            const data = await response.json();
+            if (data.valid) {
+                activeModules = data.license.modules.map(m => m.toUpperCase());
+                console.log(activeModules)
+            } else {
+                activeModules = [];
+                alert("Licenza non valida: " + data.message);
+            }
+
+            document.querySelectorAll(".modulo-link").forEach(link => {
+                const modulo = link.dataset.modulo.toUpperCase();
+                if (!activeModules.includes(modulo)) {
+                    link.classList.add("disabled-link");
+                    link.addEventListener("click", e => {
+                        e.preventDefault();
+                        alert(`Modulo ${modulo} non attivo!`);
+                    });
+                }
+            });
+
+        } catch (err) {
+            alert("Errore nel controllo licenza: " + err);
+        }
+    }
+
+    checkLicense();
+</script>
+</body>
+</html>

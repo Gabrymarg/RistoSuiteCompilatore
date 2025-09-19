@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Top 10 Prodotti più Venduti</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Posizione</th>
+            <th>Prodotto</th>
+            <th>Quantità Venduta</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for riga in dati %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ riga['prodotto'] }}</td>
+            <td>{{ riga['totale_venduto'] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
