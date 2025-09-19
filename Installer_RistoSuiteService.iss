@@ -2,7 +2,6 @@
 #define MyAppVersion "2.0"
 #define MyAppPublisher "RistoSuite, Inc."
 #define MyAppExeName "RistoSuiteService.exe"
-#define MyKioskExeName "RistoSuite_Kiosk.exe"
 
 [Setup]
 AppId={{99162DAE-BEDE-4EF5-938E-37691A25E44B}}
@@ -23,10 +22,14 @@ WizardStyle=modern
 PrivilegesRequired=admin
 Password=RistoSuite2025
 
+
 WizardImageFile=C:\COMPILATORE\RistoSuiteCompilatore\assets\logo.bmp
 LicenseFile=C:\COMPILATORE\RistoSuiteCompilatore\assets\terms.txt
 SetupIconFile=C:\COMPILATORE\RistoSuiteCompilatore\assets\installer.ico
-
+[Dirs]
+Name: "{app}\data"; Flags: uninsalwaysuninstall
+Name: "{app}\log"; Flags: uninsalwaysuninstall
+Name: "{app}\assets"; Flags: uninsalwaysuninstall
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
@@ -35,11 +38,11 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 
 [Files]
 Source: "C:\COMPILATORE\RistoSuiteCompilatore\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\COMPILATORE\RistoSuiteCompilatore\Struct.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\RistoStruct.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\COMPILATORE\RistoSuiteCompilatore\web\templates\*"; DestDir: "{app}\web\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "C:\COMPILATORE\RistoSuiteCompilatore\web\static\*"; DestDir: "{app}\web\static"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\COMPILATORE\RistoSuiteCompilatore\assets\Ristosuite.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\COMPILATORE\RistoSuiteCompilatore\assets\sfondo_ristosuite.bmp"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\assets\Ristosuite.ico"; DestDir: "{app}\assets\"; Flags: ignoreversion
+Source: "C:\COMPILATORE\RistoSuiteCompilatore\assets\sfondo_ristosuite.bmp"; DestDir: "{app}\assets\"; Flags: ignoreversion
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\.myp\OpenWithProgids"; ValueType: string; ValueName: "RistoSuiteMYP.myp"; ValueData: ""; Flags: uninsdeletevalue
@@ -70,8 +73,8 @@ begin
   EdgePath := 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe';
   DesktopShortcut := ExpandConstant('{userdesktop}\RistoSuite WebApp.lnk');
   StartupShortcut := ExpandConstant('{userappdata}\Microsoft\Windows\Start Menu\Programs\Startup\RistoSuite WebApp.lnk');
-  IconPath := ExpandConstant('{app}\Ristosuite.ico');
-  WallpaperPath := ExpandConstant('{app}\sfondo_ristosuite.bmp');
+  IconPath := ExpandConstant('{app}\assets\Ristosuite.ico');
+  WallpaperPath := ExpandConstant('{app}\assets\sfondo_ristosuite.bmp');
 
   TargetArgs := '--kiosk http://127.0.0.1:5050/login_web --edge-kiosk-type=fullscreen --no-first-run --test-type --ignore-certificate-errors --allow-insecure-localhost';
 
@@ -86,6 +89,7 @@ begin
   SetWallpaper(WallpaperPath);
 end;
 
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   ResultCode: Integer;
@@ -93,7 +97,7 @@ var
 begin
   if CurStep = ssPostInstall then
   begin
-    StructPath := ExpandConstant('{app}\Struct.exe');
+    StructPath := ExpandConstant('{app}\RistoStruct.exe');
     if FileExists(StructPath) then
       Exec(StructPath, '', '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode);
 
