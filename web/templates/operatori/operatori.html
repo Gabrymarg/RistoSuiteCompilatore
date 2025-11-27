@@ -1,27 +1,64 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Operatori</h2>
-<a href="{{ url_for('nuovo_operatore') }}" class="btn btn-success mb-3">Nuovo Operatore</a>
+{% extends "base.html" %} {% block content %}
 
-<table class="table table-striped">
-    <thead>
-        <tr><th>Nome</th><th>Cognome</th><th>Username</th><th>Ruolo</th><th>Azioni</th></tr>
-    </thead>
-    <tbody>
+<div class="container-sm d-flex justify-content-between mb-4">
+  <h2 class="align-items-center">Gestione Operatori</h2>
+  <a href="{{ url_for('nuovo_operatore') }}" class="btn btn-success mb-3"
+    >Nuovo Operatore</a
+  >
+</div>
+
+<table class="table-container glass-table align-items-center text-center">
+  <thead>
+    <tr>
+      <th class="text-center">Nome</th>
+      <th class="text-center">Cognome</th>
+      <th class="text-center">Username</th>
+      <th class="text-center">Ruolo</th>
+      <th class="text-center">Azioni</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for op in operatori %}
-        <tr>
-            <td>{{ op['nome'] }}</td>
-            <td>{{ op['cognome'] }}</td>
-            <td>{{ op['username'] }}</td>
-            <td>{{ op['ruolo'] }}</td>
-            <td>
-                <a href="{{ url_for('modifica_operatore', id_operatore=op['id_operatore']) }}" class="btn btn-primary btn-sm">Modifica</a>
-                <form action="{{ url_for('elimina_operatore', id_operatore=op['id_operatore']) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Sei sicuro di voler eliminare questo operatore?');">
-                    <button type="submit" class="btn btn-danger btn-sm">Elimina</button>
-                </form>
-            </td>
-        </tr>
+    <tr>
+      <td>{{ op['nome'] }}</td>
+      <td>{{ op['cognome'] }}</td>
+      <td>{{ op['username'] }}</td>
+      <td>{{ op['ruolo'] }}</td>
+      <td>
+        <a
+          href="{{ url_for('modifica_operatore', id_operatore=op['id_operatore']) }}"
+          class="btn btn-primary btn-sm me-1"
+          ><i class="bi bi-pen-fill"></i
+        ></a>
+        <button
+          class="btn btn-danger btn-sm btn-elimina"
+          data-action="{{ url_for('elimina_operatore', id_operatore=op['id_operatore']) }}"
+        >
+          <i class="bi bi-trash-fill"></i>
+        </button>
+      </td>
+    </tr>
     {% endfor %}
-    </tbody>
+  </tbody>
 </table>
+
+<!-- Form POST invisibile per eliminazione -->
+<form id="deleteForm" action="" method="POST" style="display: none"></form>
+
+<!-- Modal Eliminazione -->
+<div id="confirmModal" class="fade-modal">
+  <div
+    class="modal-content glass-container p-4"
+    style="max-width: 400px; text-align: center"
+  >
+    <h3 style="margin-bottom: 1rem">Conferma Eliminazione</h3>
+    <p>Sei sicuro di voler eliminare questo operatore?</p>
+    <div class="modal-buttons mt-3">
+      <button id="cancelBtn" class="btn btn-secondary me-2">Annulla</button>
+      <button id="confirmBtn" class="btn btn-danger">Elimina</button>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}

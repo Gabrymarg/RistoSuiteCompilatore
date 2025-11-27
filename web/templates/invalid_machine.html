@@ -4,7 +4,36 @@
     <title>Errore Machine ID</title>
 </head>
 <body style="background-color:#ffdddd; text-align:center; padding:50px;">
-    <h1 style="color:red;">❌ Codice Seriale non valido</h1>
-    <p>Questo dispositivo non è autorizzato a usare questa applicazione.</p>
+    <h1 style="color:red;">❌ {{message}} ❌</h1>
+    <p> {{expires_at}}.</p>
+    <h1>Questo dispositivo non è autorizzato a usare questa applicazione.</h1>
 </body>
 </html>
+
+
+
+<script>
+setInterval(() => {
+  location.reload();
+}, 10000);
+async function checkLicense() {
+  const now = Date.now();
+    try {
+      const response = await fetch("/check_license");
+      const data = await response.json();
+
+      activeModules = data.valid
+        ? data.license.modules.map((m) => m.toUpperCase())
+        : [];
+
+      sessionStorage.setItem("activeModules", JSON.stringify(activeModules));
+    } catch (err) {
+      console.error("Errore fetch licenza:", err);
+      activeModules = [];
+      sessionStorage.setItem("activeModules", JSON.stringify(activeModules));
+    }
+
+
+}
+checkLicense()
+</script>

@@ -2,75 +2,71 @@
 {% block content %}
 
 <div id="section-analisi" class="content-section">
-    <div class="card p-4 rounded-4 shadow-sm container">
-        <h4 class="mb-3">📈 Analisi Vendite</h4>
-        <p class="text-muted">Statistiche aggiornate su incassi, ordini e trend.</p>
+    <div class="container glass-container-stats p-5">
+        <h2 class="text-center text-white mb-5">📈 Analisi Vendite</h2>
+
 
         <!-- Statistiche Oggi -->
-        <div class="row g-3 mb-4 text-center">
+        <div class="row g-4 mb-4 text-center">
             <div class="col-md-3">
-                <div class="card bg-primary text-white rounded-4 shadow-sm p-3 stat-card">
-                    <h6><i class="bi bi-cash-coin"></i> Incasso Oggi</h6>
-                    <h3>€{{ incasso_oggi }}</h3>
-                    <small>Dall'apertura alla chiusura</small>
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50"><i class="bi bi-cash-coin"></i> Incasso Oggi</h6>
+                    <h3 class="text-white">€{{ incasso_oggi }}</h3>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-info text-white rounded-4 shadow-sm p-3 stat-card">
-                    <h6><i class="bi bi-receipt"></i> Ordini Oggi</h6>
-                    <h3>{{ ordini_oggi }}</h3>
-                    <small>Dall'apertura alla chiusura</small>
+            <div class="col-md-3 ">
+                <div class="glass-card p-4 ">
+                    <h6 class="text-white-50"><i class="bi bi-receipt"></i> Ordini Oggi</h6>
+                    <h3 class="text-white">{{ ordini_oggi }}</h3>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-dark rounded-4 shadow-sm p-3 stat-card">
-                    <h6><i class="bi bi-basket"></i> Scontrino Medio Oggi</h6>
-                    <h3>€{{ scontrino_oggi }}</h3>
-                    <small>Dall'apertura alla chiusura</small>
+            <div class="col-md-3 ">
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50"><i class="bi bi-basket"></i> Scontrino Medio</h6>
+                    <h3 class="text-white">€{{ scontrino_oggi }}</h3>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-secondary text-white rounded-4 shadow-sm p-3 stat-card">
-                    <h6><i class="bi bi-clock-history"></i> Tempo Medio Oggi</h6>
-                    <h3>{{ tempo_oggi }}</h3>
-                    <small>Dall'apertura alla chiusura</small>
+            <div class="col-md-3 ">
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50"><i class="bi bi-clock-history"></i> Tempo Medio</h6>
+                    <h3 class="text-white">{{ tempo_oggi }}</h3>
                 </div>
             </div>
         </div>
 
         <!-- Statistiche Settimanali -->
-        <div class="row g-3 mb-4 text-center">
+        <div class="row g-4 mb-5 text-center">
             <div class="col-md-3">
-                <div class="card bg-primary text-white rounded-4 shadow-sm p-3 stat-card">
-                    <h6>Incasso Settimana</h6>
-                    <h3>€{{ incasso_settimana }}</h3>
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50">Incasso Settimana</h6>
+                    <h3 class="text-white">€{{ incasso_settimana }}</h3>
                     <small class="{% if incasso_var|float >= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
                         {{ incasso_var }}% vs settimana scorsa
                     </small>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-info text-white rounded-4 shadow-sm p-3 stat-card">
-                    <h6>Ordini Settimana</h6>
-                    <h3>{{ ordini_settimana }}</h3>
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50">Ordini Settimana</h6>
+                    <h3 class="text-white">{{ ordini_settimana }}</h3>
                     <small class="{% if ordini_var|float >= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
                         {{ ordini_var }}% vs settimana scorsa
                     </small>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-warning text-dark rounded-4 shadow-sm p-3 stat-card">
-                    <h6>Scontrino Medio</h6>
-                    <h3>€{{ scontrino_medio }}</h3>
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50">Scontrino Medio</h6>
+                    <h3 class="text-white">€{{ scontrino_medio }}</h3>
                     <small class="{% if scontrino_var|float >= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
                         {{ scontrino_var }}% vs settimana scorsa
                     </small>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-secondary text-white rounded-4 shadow-sm p-3 stat-card">
-                    <h6>Tempo Medio</h6>
-                    <h3>{{ tempo_medio }}</h3>
+                <div class="glass-card p-4">
+                    <h6 class="text-white-50">Tempo Medio</h6>
+                    <h3 class="text-white">{{ tempo_medio }}</h3>
                     <small class="{% if tempo_var|float <= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
                         {{ tempo_var }} vs settimana scorsa
                     </small>
@@ -80,70 +76,44 @@
 
         <!-- Grafici -->
         <div class="row g-4">
-            <!-- Vendite Settimanali -->
-            <div class="col-md-7">
-                <div class="card shadow-sm rounded-4 p-3">
-                    <h5 class="card-title mb-3">📊 Vendite Settimanali</h5>
-                    {% if vendite_labels and vendite_dati %}
-                        <div style="height: 350px;">
-                            <canvas id="venditeChart"></canvas>
-                        </div>
-                    {% else %}
-                        <p class="text-muted">Nessun dato disponibile</p>
-                    {% endif %}
+            <div class="col-md-6 ">
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">📊 Vendite Settimanali</h5>
+                    <div style="height: 350px;">
+                        <canvas id="venditeChart"></canvas>
+                    </div>
                 </div>
             </div>
-
-            <!-- Ordini per Categoria -->
-            <div class="col-md-5">
-                <div class="card shadow-sm rounded-4 p-3">
-                    <h5 class="card-title mb-3">📦 Ordini per Categoria</h5>
-                    {% if categorie_labels and categorie_dati %}
-                        <div style="height: 350px;">
-                            <canvas id="categoriaChart"></canvas>
-                        </div>
-                    {% else %}
-                        <p class="text-muted">Nessun dato disponibile</p>
-                    {% endif %}
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">📦 Ordini per Categoria</h5>
+                    <div style="height: 350px;">
+                        <canvas id="categoriaChart"></canvas>
+                    </div>
                 </div>
             </div>
-
-            <!-- Ordini per Ora -->
-            <div class="col-md-7">
-                <div class="card shadow-sm rounded-4 p-3">
-                    <h5 class="card-title mb-3">🕒 Ordini per Ora</h5>
-                    {% if ore_labels and ore_dati %}
-                        <div style="height: 300px;">
-                            <canvas id="ordiniOraChart"></canvas>
-                        </div>
-                    {% else %}
-                        <p class="text-muted">Nessun dato disponibile</p>
-                    {% endif %}
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">🕒 Ordini per Ora</h5>
+                    <div style="height: 350px;">
+                        <canvas id="ordiniOraChart"></canvas>
+                    </div>
                 </div>
             </div>
-
-            <!-- Top Prodotti -->
-            <div class="col-md-5">
-                <div class="card shadow-sm rounded-4 p-3">
-                    <h5 class="card-title mb-3">🏆 Articoli Più Venduti (Top 10)</h5>
-                    {% if top_prodotti %}
-                        <div style="height: 350px;">
-                            <canvas id="topProdottiChart"></canvas>
-                        </div>
-                    {% else %}
-                        <p class="text-muted">Nessun dato disponibile</p>
-                    {% endif %}
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">🏆 Top Prodotti</h5>
+                    <div style="height: 350px;">
+                        <canvas id="topProdottiChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 // Gradient helper
 function createGradient(ctx, color1, color2) {
@@ -155,28 +125,26 @@ function createGradient(ctx, color1, color2) {
 
 // Vendite Settimanali
 {% if vendite_labels and vendite_dati %}
-const ctxVendite = document.getElementById('venditeChart').getContext('2d');
-new Chart(ctxVendite, {
+new Chart(document.getElementById('venditeChart'), {
     type: 'bar',
     data: {
         labels: {{ vendite_labels | tojson }},
         datasets: [{
             label: 'Vendite (€)',
             data: {{ vendite_dati | tojson }},
-            backgroundColor: createGradient(ctxVendite, 'rgba(54, 162, 235, 0.8)', 'rgba(54, 162, 235, 0.2)'),
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         }]
     },
     options: {
-        indexAxis: 'x',
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-            x: { beginAtZero: true, title: { display: true, text: 'Totale Vendite (€)' } },
-            y: { title: { display: true, text: 'Giorno della settimana' } }
+            x: { title: { display: true, text: 'Giorno' }, ticks: { color: '#ddd' } },
+            y: { beginAtZero: true, title: { display: true, text: 'Vendite (€)' }, ticks: { color: '#ddd' } }
         },
-        plugins: { legend: { display: false } }
+        plugins: { legend: { labels: { color: '#fff' } } }
     }
 });
 {% endif %}
@@ -192,14 +160,13 @@ new Chart(document.getElementById('categoriaChart'), {
             backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#8BC34A','#FF9800','#9C27B0','#00BCD4']
         }]
     },
-    options: { responsive: true, maintainAspectRatio: false }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } }
 });
 {% endif %}
 
 // Ordini per Ora
 {% if ore_labels and ore_dati %}
-const ctxOra = document.getElementById('ordiniOraChart').getContext('2d');
-new Chart(ctxOra, {
+new Chart(document.getElementById('ordiniOraChart'), {
     type: 'line',
     data: {
         labels: {{ ore_labels | tojson }},
@@ -207,26 +174,25 @@ new Chart(ctxOra, {
             label: 'Ordini',
             data: {{ ore_dati | tojson }},
             borderColor: '#FF6384',
-            backgroundColor: createGradient(ctxOra, 'rgba(255,99,132,0.5)', 'rgba(255,99,132,0.1)'),
+            backgroundColor: 'rgba(255,99,132,0.3)',
             fill: true,
             tension: 0.3
         }]
     },
-    options: { responsive: true, maintainAspectRatio: false }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } }
 });
 {% endif %}
 
 // Top Prodotti
 {% if top_prodotti %}
-const ctxTop = document.getElementById('topProdottiChart').getContext('2d');
-new Chart(ctxTop, {
+new Chart(document.getElementById('topProdottiChart'), {
     type: 'bar',
     data: {
         labels: {{ top_prodotti | map(attribute='nome') | list | tojson }},
         datasets: [{
             label: 'Quantità vendute',
             data: {{ top_prodotti | map(attribute='quantita') | list | tojson }},
-            backgroundColor: createGradient(ctxTop, 'rgba(75, 192, 192, 0.8)', 'rgba(75,192,192,0.2)'),
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1
         }]
@@ -236,24 +202,13 @@ new Chart(ctxTop, {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-            x: { beginAtZero: true, title: { display: true, text: 'Quantità vendute' } },
-            y: { title: { display: true, text: 'Prodotti' } }
+            x: { beginAtZero: true, ticks: { color: '#ddd' } },
+            y: { ticks: { color: '#ddd' } }
         },
-        plugins: { legend: { display: false } }
+        plugins: { legend: { labels: { color: '#fff' } } }
     }
 });
 {% endif %}
 </script>
-
-<!-- CSS Extra -->
-<style>
-    .stat-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.8rem 1.2rem rgba(0,0,0,0.15);
-    }
-</style>
 
 {% endblock %}

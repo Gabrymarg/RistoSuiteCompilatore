@@ -1,115 +1,117 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Modifica Ordine #{{ ordine['id_ordine'] }}</h2>
+<div class="container-articoli">
+    <div class="glass-container p-4" style="max-width: 1100px; margin: auto;">
+        <h2 class="mb-4">Modifica Ordine #{{ ordine['id_ordine'] }}</h2>
 
-<form method="POST" id="formModificaOrdine">
+        <form method="POST" id="formModificaOrdine">
 
-    <!-- Selezione Tavolo -->
-    <div class="mb-3">
-        <label for="tavolo">Tavolo</label>
-        <select name="tavolo" id="tavolo" class="form-select" required>
-            {% for tavolo in tavoli %}
-                <option value="{{ tavolo['id_tavolo'] }}" {% if tavolo['id_tavolo'] == ordine['id_tavolo'] %}selected{% endif %}>
-                    {{ tavolo['nome_tavolo'] }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+            <!-- Selezione Tavolo -->
+            <div class="filtro-liquid-glass mb-3">
+                <label for="tavolo">Tavolo</label>
+                <select name="tavolo" id="tavolo" class="form-select" required>
+                    {% for tavolo in tavoli %}
+                        <option value="{{ tavolo['id_tavolo'] }}" {% if tavolo['id_tavolo'] == ordine['id_tavolo'] %}selected{% endif %}>
+                            {{ tavolo['nome_tavolo'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <!-- Selezione Stato -->
-    <div class="mb-3">
-        <label for="stato">Stato</label>
-        <select name="stato" id="stato" class="form-select" required>
-            <option value="in corso" {% if ordine['stato'] == 'in corso' %}selected{% endif %}>In corso</option>
-            <option value="completato" {% if ordine['stato'] == 'completato' %}selected{% endif %}>Completato</option>
-            <option value="annullato" {% if ordine['stato'] == 'annullato' %}selected{% endif %}>Annullato</option>
-        </select>
-    </div>
+            <!-- Selezione Stato -->
+            <div class="filtro-liquid-glass mb-3">
+                <label for="stato">Stato</label>
+                <select name="stato" id="stato" class="form-select" required>
+                    <option value="in corso" {% if ordine['stato'] == 'in corso' %}selected{% endif %}>In corso</option>
+                    <option value="completato" {% if ordine['stato'] == 'completato' %}selected{% endif %}>Completato</option>
+                    <option value="annullato" {% if ordine['stato'] == 'annullato' %}selected{% endif %}>Annullato</option>
+                </select>
+            </div>
 
-    <!-- Tabella articoli -->
-    <table class="table" id="tabellaArticoliModifica">
-        <thead>
-            <tr>
-                <th>Articolo</th>
-                <th>Quantità</th>
-                <th>Ingredienti</th>
-                <th>Personalizza</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for riga in righe %}
-            <tr 
-                data-id="{{ riga.id_ordine_articolo }}" 
-                data-id-articolo="{{ riga.id_articolo }}" 
-                data-ingredienti='{{ riga.ingredienti|tojson }}'
-            >
-                <td>{{ riga.nome_articolo }}</td>
-                <td>
-                    <input type="number" name="quantita_{{ riga.id_ordine_articolo }}" value="{{ riga.quantita }}" min="1" class="form-control" required>
-                    <input type="hidden" name="id_articolo_{{ riga.id_ordine_articolo }}" value="{{ riga.id_articolo }}">
-                </td>
-                <td class="ingredienti-colonna">
-                    {% if riga.ingredienti %}
-                        {{ riga.ingredienti | map(attribute='nome_ingrediente') | join(', ') }}
-                    {% else %}
-                        Nessun ingrediente
-                    {% endif %}
-                </td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-primary btnPersonalizza" data-nome="{{ riga.nome_articolo }}">
-                        Personalizza
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <!-- Tabella articoli -->
+                <table class="table-container glass-table" id="tabellaArticoliModifica">
+                    <thead>
+                        <tr>
+                            <th>Articolo</th>
+                            <th>Quantità</th>
+                            <th>Ingredienti</th>
+                            <th>Personalizza</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for riga in righe %}
+                        <tr 
+                            data-id="{{ riga.id_ordine_articolo }}" 
+                            data-id-articolo="{{ riga.id_articolo }}" 
+                            data-ingredienti='{{ riga.ingredienti|tojson }}'
+                        >
+                            <td>{{ riga.nome_articolo }}</td>
+                            <td>
+                                <input type="number" name="quantita_{{ riga.id_ordine_articolo }}" value="{{ riga.quantita }}" min="1" class="form-control" required>
+                                <input type="hidden" name="id_articolo_{{ riga.id_ordine_articolo }}" value="{{ riga.id_articolo }}">
+                            </td>
+                            <td class="ingredienti-colonna text-white">
+                                {% if riga.ingredienti %}
+                                    {{ riga.ingredienti | map(attribute='nome_ingrediente') | join(', ') }}
+                                {% else %}
+                                    Nessun ingrediente
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm btnPersonalizza" data-nome="{{ riga.nome_articolo }}">
+                                    Personalizza
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-    <button class="btn btn-success" type="submit">Aggiorna Ordine</button>
-</form>
 
-<!-- Modal personalizzazione -->
-<div class="modal fade" id="modalPersonalizza" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="nomeArticolo"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
-      </div>
-      <div class="modal-body">
+            <!-- Pulsanti -->
+            <div class="mt-4 text-end">
+                <button type="button" class="btn btn-danger me-2" onclick="window.history.back()">← Indietro</button>
+                <button class="btn btn-success" type="submit">Aggiorna Ordine</button>
+            </div>
+        </form>
 
-        <div class="mb-3">
-          <h6>Ingredienti base (non modificabili)</h6>
-          <div id="ingredienti-base"></div>
+        <!-- Modal personalizzazione -->
+        <div class="fade-modal" id="modalPersonalizza">
+            <div class="modal-content glass-container p-4" style="max-width: 600px; text-align: center;">
+                <h5 id="nomeArticolo"></h5>
+
+                <!--<div class="mb-3 text-start">
+                        <h6>Ingredienti base (non modificabili)</h6>
+                        <div id="ingredienti-base" class="text-white"></div>
+                    </div>-->
+
+                <div class="mb-3 text-start">
+                    <h6>Ingredienti personalizzati</h6>
+                    <div id="ingredienti-lista" class="text-white"><em>Nessun ingrediente personalizzato selezionato.</em></div>
+                    <hr>
+                    <div class="input-group mb-2">
+                        <select id="aggiungiIngredienteSelect" class="form-select"></select>
+                        <button type="button" id="btnAggiungiIngrediente" class="btn btn-outline-secondary">Aggiungi ingrediente</button>
+                    </div>
+                    <div id="ingredienti-aggiunti" class="text-white"></div>
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label for="quantitaModifica">Quantità da personalizzare</label>
+                    <input type="number" id="quantitaModifica" class="form-control" min="1" value="1">
+                </div>
+
+                <div class="modal-buttons mt-3">
+                    <button type="button" id="btnSalvaPersonalizzazione" class="btn btn-primary">Salva</button>
+                    <button type="button" class="btn btn-secondary" id="chiudiModal">Annulla</button>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-          <h6>Ingredienti personalizzati</h6>
-          <div id="ingredienti-lista"><em>Nessun ingrediente personalizzato selezionato.</em></div>
-          <hr>
-          <div class="input-group mb-2">
-            <select id="aggiungiIngredienteSelect" class="form-select"></select>
-            <button type="button" id="btnAggiungiIngrediente" class="btn btn-outline-secondary">Aggiungi ingrediente</button>
-          </div>
-          <div id="ingredienti-aggiunti"></div>
-        </div>
-
-        <div class="mb-3">
-          <label for="quantitaModifica">Quantità da personalizzare</label>
-          <input type="number" id="quantitaModifica" class="form-control" min="1" value="1">
-        </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="btnSalvaPersonalizzazione" class="btn btn-primary">Salva</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-      </div>
     </div>
-  </div>
 </div>
 
-<!-- Script rimane invariato -->
 <script>
+// Script invariato, gestisce la personalizzazione articoli come nel tuo esempio
 document.addEventListener('DOMContentLoaded', () => {
     const ingredientiDisponibili = {{ ingredienti_disponibili | tojson }};
     const ingredientiBasePerArticolo = {{ ingredienti_base_per_articolo | tojson }};
@@ -117,15 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const ingredientiMap = new Map(ingredientiDisponibili.map(i => [i.id_ingrediente, i.nome_ingrediente]));
 
     const modalEl = document.getElementById('modalPersonalizza');
-    const modal = new bootstrap.Modal(modalEl);
     const nomeArticoloEl = document.getElementById('nomeArticolo');
     const listaIngredientiEl = document.getElementById('ingredienti-lista');
     const selectAggiungiIngrediente = document.getElementById('aggiungiIngredienteSelect');
     const btnAggiungiIngrediente = document.getElementById('btnAggiungiIngrediente');
     const ingredientiAggiuntiEl = document.getElementById('ingredienti-aggiunti');
-    const ingredientiBaseEl = document.getElementById('ingredienti-base');
+    //const ingredientiBaseEl = document.getElementById('ingredienti-base');
     const quantitaModificaEl = document.getElementById('quantitaModifica');
     const btnSalva = document.getElementById('btnSalvaPersonalizzazione');
+    const btnChiudi = document.getElementById('chiudiModal');
 
     let idRigaCorrente = null;
     let idArticoloCorrente = null;
@@ -164,15 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function mostraIngredientiBase() {
-        const base = (ingredientiBasePerArticolo[idArticoloCorrente] || []).map(id => ({
-            id_ingrediente: id,
-            nome_ingrediente: ingredientiMap.get(id)
-        }));
-        ingredientiBaseEl.innerHTML = base.length === 0
-            ? '<em>Nessun ingrediente base.</em>'
-            : base.map(i => `<span class="badge bg-secondary me-1">${i.nome_ingrediente}</span>`).join('');
-    }
+    //function mostraIngredientiBase() {
+    //    const base = (ingredientiBasePerArticolo[idArticoloCorrente] || []).map(id => ({
+    //        id_ingrediente: id,
+    //        nome_ingrediente: ingredientiMap.get(id)
+    //    }));
+    //    ingredientiBaseEl.innerHTML = base.length === 0
+    //        ? '<em>Nessun ingrediente base.</em>'
+    //        : base.map(i => `<span class="badge bg-secondary me-1">${i.nome_ingrediente}</span>`).join('');
+    //}
 
     function caricaIngredientiPersonalizzati(tr) {
         const raw = tr.dataset.ingredienti || '[]';
@@ -210,13 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
             nomeArticoloEl.textContent = `Personalizza: ${btn.dataset.nome}`;
 
             caricaIngredientiPersonalizzati(tr);
-            mostraIngredientiBase();
+            //mostraIngredientiBase();
             aggiornaListaIngredienti();
             aggiornaSelectAggiungi();
             aggiornaIngredientiAggiunti();
 
             quantitaModificaEl.value = tr.querySelector('input[name^="quantita_"]').value;
-            modal.show();
+            modalEl.classList.add('show');
         });
     });
 
@@ -231,14 +233,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnSalva.addEventListener('click', () => {
         const tr = document.querySelector(`#tabellaArticoliModifica tr[data-id="${idRigaCorrente}"]`);
-        if (!tr) return modal.hide();
+        if (!tr) return modalEl.classList.remove('show');
 
         const q = parseInt(quantitaModificaEl.value);
         if (q > 0) tr.querySelector('input[name^="quantita_"]').value = q;
 
         aggiornaCellaIngredienti(tr);
-        modal.hide();
+        modalEl.classList.remove('show');
     });
+
+    btnChiudi.addEventListener('click', () => modalEl.classList.remove('show'));
 });
 </script>
 {% endblock %}

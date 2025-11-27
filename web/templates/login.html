@@ -1,52 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Login Operatore</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <title>Login Operatore</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='./Ristosuite.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='./bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='./css/login_page.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='./bootstrap-icons/bootstrap-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='./google-font/font.css') }}">
 
-        .card {
-            width: 300px;
-        }
-
-        /* TOAST */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-        }
-
-        .toast {
-            min-width: 250px;
-        }
-    </style>
 </head>
+
 <body>
-
-<div class="card p-4 shadow">
-    <h2 class="text-center mb-3">Login Operatore</h2>
-    <form method="POST" action="/login_web">
-        <div class="mb-3">
-            <input type="text" name="username" class="form-control" placeholder="Username" required>
-        </div>
-        <div class="mb-3">
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Accedi</button>
-    </form>
-</div>
-
-<!-- TOAST -->
+  <!-- TOAST -->
 <div class="toast-container position-fixed top-0 end-0 p-3">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
@@ -59,15 +25,80 @@
         {% endfor %}
     {% endwith %}
 </div>
+  <div class="card-container">
+    <!-- LOGO -->
+    <img
+      src="{{ url_for('static', filename='./Logo_Loading_Ristosuite.png') }}"
+      alt="Logo Ristosuite"
+      class="logo"
+    />
 
+    <!-- CARD LOGIN -->
+    <div class="card">
+      <h2>Accedi</h2>
+      <form method="POST" action="/login_web">
+        <div class="mb-3">
+          <input type="text" name="username" class="form-control" placeholder="Username" required />
+        </div>
+        <div class="mb-3">
+          <input type="password" name="password" class="form-control" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Accedi</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- BOTTONE DI ASSISTENZA -->
+  <button id="supportBtn">Chiedi supporto</button>
+
+  <!-- POPUP DI ASSISTENZA -->
+  <div id="supportPopup">
+    <div class="popup-content">
+      <h3 style="margin-bottom: 1rem; color: #162b53">Supporto Ristosuite</h3>
+      <p>✉️ ➤ <a href="mailto:amministrazione.ristosuite@gmail.com">amministrazione.ristosuite@gmail.com</a></p>
+      <p>✉️ ➤ <a href="mailto:assistenza.ristosuite@gmail.com">assistenza.ristosuite@gmail.com</a></p>
+      <p>📞 ➤ +39 351-3019910</p>
+      <p>📞 ➤ +39 339-2759711</p>
+      <button id="closeSupport">×</button>
+    </div>
+  </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+  <script>
+        document.addEventListener("DOMContentLoaded", function () {
         const toastElList = [].slice.call(document.querySelectorAll('.toast'))
         const toastList = toastElList.map(toastEl => new bootstrap.Toast(toastEl, { delay: 3000, animation: true }))
         toastList.forEach(toast => toast.show())
     });
-</script>
+    const btn = document.getElementById("supportBtn");
+    const popup = document.getElementById("supportPopup");
+    const content = popup.querySelector(".popup-content");
+    const close = document.getElementById("closeSupport");
 
+    // Apri popup
+    btn.addEventListener("click", () => {
+      popup.classList.add("show");
+      content.classList.remove("fade-out");
+      content.classList.add("fade-in");
+    });
+
+    // Chiudi popup
+    close.addEventListener("click", () => {
+      content.classList.remove("fade-in");
+      content.classList.add("fade-out");
+
+      content.addEventListener("animationend", () => {
+        if (content.classList.contains("fade-out")) {
+          popup.classList.remove("show");
+        }
+      }, { once: true });
+    });
+
+    // Chiudi cliccando fuori dal box
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        close.click();
+      }
+    });
+  </script>
 </body>
 </html>

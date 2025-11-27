@@ -1,79 +1,118 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Modifica Ingrediente</h2>
+<div class="container-articoli">
+    <div class="glass-container p-4" style="max-width: 600px; margin: auto;">
+        <h2 class="mb-4">Modifica Ingrediente</h2>
 
-{% if error %}
-<div class="alert alert-danger">{{ error }}</div>
-{% endif %}
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
 
-<form method="POST" class="mb-3">
-    <div class="mb-3">
-        <label for="nome" class="form-label">Nome</label>
-        <input type="text" id="nome" name="nome" class="form-control" value="{{ ingrediente['nome'] }}" required>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" id="nome" name="nome" class="form-control" value="{{ ingrediente['nome'] }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="quantita" class="form-label">Quantità</label>
+                <input type="number" id="quantita" step="0.01" min="0" name="quantita" class="form-control" value="{{ ingrediente['quantita'] }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="unita_misura" class="form-label">Unità di misura</label>
+                <select id="unita_misura" name="unita_misura" class="form-select" required>
+                    <option value="Grammi" {% if ingrediente['unita_misura'] == 'Grammi' %}selected{% endif %}>Grammi</option>
+                    <option value="KG" {% if ingrediente['unita_misura'] == 'KG' %}selected{% endif %}>KG</option>
+                    <option value="PEZZI" {% if ingrediente['unita_misura'] == 'PEZZI' %}selected{% endif %}>PEZZI</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="prezzo_unitario" class="form-label">Prezzo Unitario (€)</label>
+                <input type="number" id="prezzo_unitario" step="0.01" min="0" name="prezzo_unitario" class="form-control" value="{{ ingrediente['prezzo_unitario'] }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="scorta_minima" class="form-label">Scorta Minima</label>
+                <input type="number" id="scorta_minima" step="0.01" min="0" name="scorta_minima" class="form-control" value="{{ ingrediente['scorta_minima'] }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="scorta_massima" class="form-label">Scorta Massima</label>
+                <input type="number" id="scorta_massima" step="0.01" min="0" name="scorta_massima" class="form-control" value="{{ ingrediente['scorta_massima'] }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="id_allergene" class="form-label">Lista Allergeni</label>
+                <select id="id_allergene" name="id_allergene" class="form-select">
+                    <option value="" {% if not ingrediente['id_allergene'] %}selected{% endif %}>-- Nessuno --</option>
+                    {% for tipo in allergeni %}
+                        <option value="{{ tipo['id_allergene'] }}" {% if ingrediente['id_allergene'] == tipo['id_allergene'] %}selected{% endif %}>
+                            {{ tipo['nome'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_fornitore" class="form-label">Fornitore</label>
+                <select id="id_fornitore" name="id_fornitore" class="form-select" required>
+                    <option value="" {% if not ingrediente['id_fornitore'] %}selected{% endif %}>-- Seleziona Fornitore --</option>
+                    {% for forn in fornitori %}
+                        <option value="{{ forn['id_fornitore'] }}" {% if ingrediente['id_fornitore'] == forn['id_fornitore'] %}selected{% endif %}>
+                            {{ forn['nome'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="descrizione" class="form-label">Descrizione (opzionale)</label>
+                <textarea id="descrizione" name="descrizione" class="form-control">{{ ingrediente['descrizione'] }}</textarea>
+            </div>
+
+            <div class="mt-4 text-end">
+                <button type="button" class="btn btn-danger me-2" id="btnEliminaIngrediente">Elimina Ingrediente</button>
+                <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">← Indietro</button>
+                <button type="submit" class="btn btn-primary">Aggiorna</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label for="quantita" class="form-label">Quantità</label>
-        <input type="number" id="quantita" step="0.01" min="0" name="quantita" class="form-control" value="{{ ingrediente['quantita'] }}" required>
+<!-- Form POST invisibile per eliminazione -->
+<form id="deleteForm" action="" method="POST" style="display:none;"></form>
+
+<!-- Modal Eliminazione -->
+<div id="confirmModal" class="fade-modal">
+  <div class="modal-content glass-container p-4">
+    <h3 style="margin-bottom: 1rem;">Conferma Eliminazione</h3>
+    <p>Sei sicuro di voler eliminare questo ingrediente?</p>
+    <div class="modal-buttons mt-3">
+      <button id="cancelBtn" class="btn btn-secondary me-2">Annulla</button>
+      <button id="confirmBtn" class="btn btn-danger">Elimina</button>
     </div>
+  </div>
+</div>
 
-    <div class="mb-3">
-        <label for="unita_misura" class="form-label">Unità di misura</label>
-        <select id="unita_misura" name="unita_misura" class="form-select" required>
-            <option value="Grammi" {% if ingrediente['unita_misura'] == 'Grammi' %}selected{% endif %}>Grammi</option>
-            <option value="KG" {% if ingrediente['unita_misura'] == 'KG' %}selected{% endif %}>KG</option>
-            <option value="PEZZI" {% if ingrediente['unita_misura'] == 'PEZZI' %}selected{% endif %}>PEZZI</option>
-        </select>
-    </div>
+<script>
+// Gestione modal di eliminazione sicura
+document.getElementById('btnEliminaIngrediente')?.addEventListener('click', function(e){
+    e.preventDefault();
+    const action = "{{ url_for('elimina_ingrediente', id_ingrediente=ingrediente['id_ingrediente']) }}";
+    const modal = document.getElementById('confirmModal');
+    modal.classList.add('show');
 
-    <div class="mb-3">
-        <label for="prezzo_unitario" class="form-label">Prezzo Unitario (€)</label>
-        <input type="number" id="prezzo_unitario" step="0.01" min="0" name="prezzo_unitario" class="form-control" value="{{ ingrediente['prezzo_unitario'] }}">
-    </div>
+    document.getElementById('confirmBtn').onclick = function(){
+        const form = document.getElementById('deleteForm');
+        form.action = action;
+        form.submit();
+    }
 
-    <div class="mb-3">
-        <label for="scorta_minima" class="form-label">Scorta Minima</label>
-        <input type="number" id="scorta_minima" step="0.01" min="0" name="scorta_minima" class="form-control" value="{{ ingrediente['scorta_minima'] }}">
-    </div>
-
-    <div class="mb-3">
-        <label for="scorta_massima" class="form-label">Scorta Massima</label>
-        <input type="number" id="scorta_massima" step="0.01" min="0" name="scorta_massima" class="form-control" value="{{ ingrediente['scorta_massima'] }}">
-    </div>
-
-    <div class="mb-3">
-        <label for="id_allergene" class="form-label">Lista Allergeni</label>
-        <select id="id_allergene" name="id_allergene" class="form-select">
-            <option value="" {% if not ingrediente['id_allergene'] %}selected{% endif %}>-- Nessuno --</option>
-            {% for tipo in allergeni %}
-                <option value="{{ tipo['id_allergene'] }}" {% if ingrediente['id_allergene'] == tipo['id_allergene'] %}selected{% endif %}>
-                    {{ tipo['nome'] }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label for="id_fornitore" class="form-label">Fornitore</label>
-        <select id="id_fornitore" name="id_fornitore" class="form-select" required>
-            <option value="" {% if not ingrediente['id_fornitore'] %}selected{% endif %}>-- Seleziona Fornitore --</option>
-            {% for forn in fornitori %}
-                <option value="{{ forn['id_fornitore'] }}" {% if ingrediente['id_fornitore'] == forn['id_fornitore'] %}selected{% endif %}>
-                    {{ forn['nome'] }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label for="descrizione" class="form-label">Descrizione (opzionale)</label>
-        <textarea id="descrizione" name="descrizione" class="form-control">{{ ingrediente['descrizione'] }}</textarea>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Aggiorna</button>
-</form>
-
-<form method="POST" action="{{ url_for('elimina_ingrediente', id_ingrediente=ingrediente['id_ingrediente']) }}" onsubmit="return confirm('Sei sicuro di voler eliminare questo ingrediente?');">
-    <button type="submit" class="btn btn-danger">Elimina Ingrediente</button>
-</form>
+    document.getElementById('cancelBtn').onclick = function(){
+        modal.classList.remove('show');
+    }
+});
+</script>
 {% endblock %}

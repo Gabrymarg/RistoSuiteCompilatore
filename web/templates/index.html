@@ -1,5 +1,117 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>Benvenuto nel gestionale pizzeria</h1>
-<p>Usa il menu per navigare tra le sezioni.</p>
+{% extends "base.html" %} {% block content %}
+<div class="wrap fade-in">
+  <main class="card" role="main">
+    <section>
+      <div class="custom-layer">
+        <h2 id="user-greeting">
+          Ciao <span id="user-nome"></span> <span id="user-cognome"></span>
+          <i class="bi bi-person-circle"></i>
+        </h2>
+        <p id="dynamic-frase">Caricamento frase...</p>
+      </div>
+
+      <footer id="versione_container">
+        <span>Versione <strong>2.0</strong> • RistoSuite Beta</span>
+      </footer>
+    </section>
+
+    <aside class="right-panel" aria-label="overview">
+      <div class="d-flex justify-content-center gap-3" id="stats-container">
+        <div class="stat-box" onclick="location.href='tavoli'">
+          <div class="num" id="stat-tavoli">0</div>
+          <div class="small">Tavoli attivi</div>
+        </div>
+        <div class="stat-box" onclick="location.href='/storico_ordini'">
+          <div class="num" id="stat-ordini-chiusi">0</div>
+          <div class="small">Ordini completati</div>
+        </div>
+        <div class="stat-box" onclick="location.href='/ordini'">
+          <div class="num" id="stat-ordini">0</div>
+          <div class="small">Ordini da completare</div>
+        </div>
+      </div>
+      <div class="stat-box" onclick="location.href='/statistiche/ordini'">
+        <div class="num" id="stat-incasso">€0.00</div>
+        <div class="small">Incasso Giornaliero</div>
+      </div>
+      <div class="status-box">
+        <span id="stat-lic"></span>
+        <span id="stat-lic-is_alive" style="font-weight: 700; color: rgba(255, 38, 38, 0.849)">Attivo</span>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- SCRIPT ORA E DATI -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+
+    // FRASE DINAMICA
+    const frasi = [
+      "Ti diamo il benvenuto in RistoSuite!",
+      "Oggi è una bella giornata di lavoro, cominciamo!",
+      "Forza team, avanti con gli ordini!",
+      "Ogni tavolo è una nuova opportunità!",
+      "Mantieni il sorriso, i clienti lo apprezzano!",
+      "Piccoli sforzi portano grandi risultati!",
+      "L’energia di oggi fa la differenza!",
+      "Preparati a servire al meglio!",
+      "Focus e precisione: il successo è vicino!",
+      "Team unito, tutto è possibile!",
+      "Oggi puntiamo a fare record di ordini!",
+    ];
+    let index = 0;
+    const fraseEl = document.getElementById("dynamic-frase");
+    function cambiaFrase() {
+      fraseEl.style.opacity = 0;
+      setTimeout(() => {
+        index = (index + 1) % frasi.length;
+        fraseEl.textContent = frasi[index];
+        fraseEl.style.opacity = 1;
+      }, 500);
+    }
+    setInterval(cambiaFrase, 10000);
+
+    // FETCH DATI DASHBOARD
+    async function loadDashboard() {
+      try {
+        const res = await fetch("/api/dashboard");
+        const data = await res.json();
+
+        if (data.error) {
+          console.error(data.error);
+          return;
+        }
+
+        document.getElementById("user-nome").textContent = data.user.nome;
+        document.getElementById("user-cognome").textContent = data.user.cognome;
+        fraseEl.textContent = data.frase;
+        document.getElementById("stat-tavoli").textContent = data.tavoli;
+
+        document.getElementById("stat-ordini-chiusi").textContent =
+          data.ordini_oggi;
+        document.getElementById("stat-ordini").textContent =
+          data.ordini_pending_oggi;
+        document.getElementById("stat-incasso").textContent =
+          "€" + parseFloat(data.incasso_oggi).toFixed(2);
+        document.getElementById("stat-lic").textContent =
+        "Scadenza Licenza " + data.giorni_rimanenti + " Giorni"; 
+        if(data.giorni_rimanenti > 60){
+          document.getElementById("stat-lic-is_alive").style.color = '#5bf27e'
+        }else if(data.giorni_rimanenti < 30 && data.giorni_rimanenti > 7){
+          document.getElementById("stat-lic-is_alive").style.color = 'rgb(241, 174, 30)'
+        }
+        else if(data.giorni_rimanenti < 7){
+          document.getElementById("stat-lic-is_alive").style.color = 'rgba(255, 38, 38, 0.849)'
+        }
+
+      } catch (err) {
+        console.error("Errore caricamento dashboard:", err);
+      }
+    }
+    loadDashboard();
+    setInterval(loadDashboard, 60000); // aggiorna dati ogni minuto
+  });
+</script>
 {% endblock %}

@@ -1,0 +1,32 @@
+.ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+}
+.cta {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.primary {
+  background: var(--accent-2);
+  color: #041026;
+  box-shadow: 0 8px 22px rgba(107, 139, 255, 0.18);
+}
+
+
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(255,255,255,0.03);
+}
+
+.table tbody tr:hover {
+  background-color: rgba(255,255,255,0.12);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}

@@ -1,37 +1,60 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Modifica Fornitore</h2>
-    <form method="post" class="card p-4 shadow-sm">
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" id="nome" name="nome" class="form-control" value="{{ fornitore.nome }}" required>
-        </div>
-        
-        <div class="mb-3">
-            <label for="indirizzo" class="form-label">Indirizzo</label>
-            <input type="text" id="indirizzo" name="indirizzo" class="form-control" value="{{ fornitore.indirizzo }}">
-        </div>
-        
-        <div class="mb-3">
-            <label for="telefono" class="form-label">Telefono</label>
-            <input type="text" id="telefono" name="telefono" class="form-control" value="{{ fornitore.telefono }}">
-        </div>
-        
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" id="email" name="email" class="form-control" value="{{ fornitore.email }}">
-        </div>
-        
+<div class="container-articoli">
+    <div class="glass-container p-4" style="max-width: 600px; margin: auto;">
+        <h2 class="mb-4">Modifica Fornitore</h2>
+
         {% if error %}
             <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
-        
-        <div class="d-flex justify-content-between">
-            <a href="{{ url_for('lista_fornitori') }}" class="btn btn-secondary">Torna alla lista</a>
-            <button type="submit" class="btn btn-primary">Aggiorna</button>
-        </div>
-    </form>
+
+        <form method="post">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" id="nome" name="nome" class="form-control" value="{{ fornitore.nome }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="indirizzo" class="form-label">Indirizzo</label>
+                <input type="text" id="indirizzo" name="indirizzo" class="form-control" value="{{ fornitore.indirizzo }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Telefono</label>
+                <input type="text" id="telefono" name="telefono" class="form-control" value="{{ fornitore.telefono }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ fornitore.email }}">
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="{{ url_for('lista_fornitori') }}" class="btn btn-secondary">← Torna alla lista</a>
+                
+                <div>
+                    <button type="submit" class="btn btn-primary">Aggiorna</button>
+                    <button type="button" class="btn btn-danger btn-elimina" data-action="{{ url_for('elimina_fornitore', id_fornitore=fornitore.id_fornitore) }}">Elimina</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
+
+<!-- Form POST invisibile per eliminazione -->
+<form id="deleteForm" action="" method="POST" style="display:none;"></form>
+
+<!-- Modal Eliminazione -->
+<div id="confirmModal" class="fade-modal">
+  <div class="modal-content glass-container p-4">
+    <h3 style="margin-bottom: 1rem;">Conferma Eliminazione</h3>
+    <p>Sei sicuro di voler eliminare questo fornitore?</p>
+    <div class="modal-buttons mt-3">
+      <button id="cancelBtn" class="btn btn-secondary me-2">Annulla</button>
+      <button id="confirmBtn" class="btn btn-danger">Elimina</button>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}

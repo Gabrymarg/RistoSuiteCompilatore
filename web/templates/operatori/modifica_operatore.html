@@ -1,29 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Modifica Operatore</h2>
+<div class="container-articoli">
+    <div class="glass-container p-4" style="max-width: 600px; margin: auto;">
+        <h2 class="mb-4">Modifica Operatore</h2>
 
-<form method="POST">
-    <div class="mb-3">
-        <label for="nome" class="form-label">Nome</label>
-        <input type="text" name="nome" id="nome" class="form-control" value="{{ operatore['nome'] }}" required>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" name="nome" id="nome" class="form-control" value="{{ operatore['nome'] }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="cognome" class="form-label">Cognome</label>
+                <input type="text" name="cognome" id="cognome" class="form-control" value="{{ operatore['cognome'] }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="ruolo" class="form-label">Ruolo</label>
+                <select name="ruolo" id="ruolo" class="form-select" required>
+                    <option value="cassiere" {% if operatore['ruolo'] == 'cassiere' %}selected{% endif %}>Cassiere</option>
+                    <option value="cameriere" {% if operatore['ruolo'] == 'cameriere' %}selected{% endif %}>Cameriere</option>
+                    <option value="supervisore" {% if operatore['ruolo'] == 'supervisore' %}selected{% endif %}>Supervisore</option>
+                    <option value="admin" {% if operatore['ruolo'] == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Nuova Password (lascia vuoto per mantenere quella attuale)</label>
+                <input type="password" name="password" id="password" class="form-control">
+            </div>
+
+            <div class="mt-4 text-end">
+                <button type="button" class="btn btn-danger me-2" onclick="window.history.back()">← Indietro</button>
+                <button type="submit" class="btn btn-primary">Aggiorna</button>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label for="cognome" class="form-label">Cognome</label>
-        <input type="text" name="cognome" id="cognome" class="form-control" value="{{ operatore['cognome'] }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="ruolo" class="form-label">Ruolo</label>
-        <select name="ruolo" id="ruolo" class="form-select" required>
-            <option value="cassiere" {% if operatore['ruolo'] == 'cassiere' %}selected{% endif %}>Cassiere</option>
-            <option value="cameriere" {% if operatore['ruolo'] == 'cameriere' %}selected{% endif %}>Cameriere</option>
-            <option value="supervisore" {% if operatore['ruolo'] == 'supervisore' %}selected{% endif %}>Supervisore</option>
-            <option value="admin" {% if operatore['ruolo'] == 'admin' %}selected{% endif %}>Admin</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Nuova Password (lascia vuoto per mantenere quella attuale)</label>
-        <input type="password" name="password" id="password" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-primary">Aggiorna</button>
-</form>
+</div>
 {% endblock %}
