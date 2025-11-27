@@ -76,7 +76,7 @@ begin
   IconPath := ExpandConstant('{app}\assets\Ristosuite.ico');
   WallpaperPath := ExpandConstant('{app}\assets\sfondo_ristosuite.bmp');
 
-  TargetArgs := '--kiosk http://127.0.0.1:5050/login_web --edge-kiosk-type=fullscreen --no-first-run --test-type --ignore-certificate-errors --allow-insecure-localhost';
+  TargetArgs := '--kiosk http://127.0.0.1:5050/login_web --edge-kiosk-type=fullscreen --no-first-run --test-type --ignore-certificate-errors --allow-insecure-localhost --disable-features=msEdgeLens';
 
   Exec('powershell.exe',
        '-Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(''' + DesktopShortcut + '''); $s.TargetPath = ''' + EdgePath + '''; $s.Arguments = ''' + TargetArgs + '''; $s.IconLocation = ''' + IconPath + '''; $s.Save()"',
